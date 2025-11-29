@@ -47,6 +47,18 @@
             @endif
         </div>
 
+        <div>
+            <x-input-label for="bio" :value="__('Bio / Short Description')" />
+            <textarea id="bio" name="bio" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="3">{{ old('bio', $user->bio) }}</textarea>
+            <x-input-error class="mt-2" :messages="$errors->get('bio')" />
+        </div>
+
+        <div>
+            <x-input-label for="external_link" :value="__('External Link (Portfolio/Instagram)')" />
+            <x-text-input id="external_link" name="external_link" type="url" class="mt-1 block w-full" :value="old('external_link', $user->external_link)" placeholder="https://..." />
+            <x-input-error class="mt-2" :messages="$errors->get('external_link')" />
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
