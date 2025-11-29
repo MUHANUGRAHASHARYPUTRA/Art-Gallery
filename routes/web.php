@@ -67,6 +67,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-favorites', [ArtworkController::class, 'myFavorites'])->name('artworks.favorites');
     Route::post('/artworks/{artwork}/report', [ArtworkController::class, 'report'])->name('artworks.report');
 
+    // Challenges & Submissions
+    Route::post('/challenges/{challenge}/submit', [CuratorController::class, 'submit'])->name('challenges.submit');
+    Route::get('/my-submissions', [CuratorController::class, 'mySubmissions'])->name('challenges.my_submissions');
+
     // Collections / Moodboards (Phase 15)
     Route::get('/collections', [CollectionController::class, 'index'])->name('collections.index');
     Route::post('/collections', [CollectionController::class, 'store'])->name('collections.store');
