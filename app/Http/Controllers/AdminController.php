@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Artwork;
 use App\Models\Category;
-use App\Models\Report; 
+use App\Models\Report; // Pastikan import ini ada
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;

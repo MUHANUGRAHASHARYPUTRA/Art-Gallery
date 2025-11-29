@@ -8,6 +8,7 @@ use App\Http\Controllers\CuratorController;
 use App\Http\Controllers\CollectionController;
 use App\Models\Artwork;
 use App\Models\Category;
+use App\Models\Challenge;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -38,7 +39,7 @@ Route::get('/', function (Request $request) {
     $categories = Category::all();
     
     // Active Challenges Section
-    $activeChallenges = \App\Models\Challenge::where('end_date', '>=', now())->latest()->take(3)->get();
+    $activeChallenges = Challenge::where('end_date', '>=', now())->latest()->take(3)->get();
 
     return view('welcome', compact('artworks', 'categories', 'activeChallenges'));
 })->name('home');

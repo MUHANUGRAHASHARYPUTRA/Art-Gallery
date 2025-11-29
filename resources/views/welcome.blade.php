@@ -19,7 +19,6 @@
     <x-public-navbar />
 
     <main class="flex-grow pt-28">
-
         <div class="max-w-7xl mx-auto px-6 lg:px-8 mb-16">
             <div class="flex flex-col md:flex-row items-end justify-between gap-8">
                 <div class="max-w-2xl" data-aos="fade-right" data-aos-duration="1000">
@@ -51,6 +50,43 @@
                 </div>
             </div>
         </div>
+
+        @if (isset($activeChallenges) && $activeChallenges->isNotEmpty() && !request('search') && !request('category'))
+            <div class="max-w-7xl mx-auto px-6 lg:px-8 mb-20" data-aos="fade-up" data-aos-duration="800">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="flex h-3 w-3">
+                        <span
+                            class="animate-ping absolute inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                    </span>
+                    <h2 class="text-xl font-bold text-gray-900 uppercase tracking-widest">Live Challenges</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach ($activeChallenges as $challenge)
+                        <a href="{{ route('challenges.show', $challenge) }}"
+                            class="group relative h-64 rounded-3xl overflow-hidden bg-gray-900 shadow-lg hover:shadow-2xl transition duration-500"
+                            data-aos="zoom-in" data-aos-delay="{{ $loop->iteration * 100 }}">
+                            @if ($challenge->banner_path)
+                                <img src="{{ Storage::url($challenge->banner_path) }}"
+                                    class="w-full h-full object-cover opacity-60 group-hover:opacity-40 transition duration-700 transform group-hover:scale-110">
+                            @endif
+                            <div class="absolute inset-0 flex flex-col justify-end p-8">
+                                <div class="mb-2">
+                                    <span
+                                        class="px-3 py-1 rounded-lg bg-white/20 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider border border-white/10">
+                                        Ends {{ $challenge->end_date->format('d M') }}
+                                    </span>
+                                </div>
+                                <h3
+                                    class="text-2xl font-black text-white leading-none group-hover:underline decoration-indigo-500 decoration-4 underline-offset-4">
+                                    {{ $challenge->title }}</h3>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        @endif
 
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
 
