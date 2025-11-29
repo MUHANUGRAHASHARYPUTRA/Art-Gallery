@@ -37,7 +37,10 @@ Route::get('/', function (Request $request) {
     $artworks = $query->get();
     $categories = Category::all();
     
-    return view('welcome', compact('artworks', 'categories'));
+    // Active Challenges Section
+    $activeChallenges = \App\Models\Challenge::where('end_date', '>=', now())->latest()->take(3)->get();
+
+    return view('welcome', compact('artworks', 'categories', 'activeChallenges'));
 })->name('home');
 
 // --- DASHBOARD (REDIRECT BASED ON ROLE) ---
@@ -101,5 +104,32 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
     Route::delete('/moderation/{report}/takedown', [AdminController::class, 'takeDown'])->name('moderation.takedown');
     Route::patch('/moderation/{report}/dismiss', [AdminController::class, 'dismissReport'])->name('moderation.dismiss');
 });
+
+// --- CURATOR ROUTES ---
+Route::middleware(['auth', 'verified'])->prefix('curator')->name('curator.')->group(function () {
+    // Halaman Pending (Bisa diakses tanpa middleware 'curator' penuh)
+    Route::get('/pending', function() {
+        if (Auth::user()->role !== 'curator') return redirect('/');
+        if (Auth::user()->status === 'active') return redirect()->route('curator.challenges');
+        return view('auth.pending');
+    })->name('pending');
+
+    // Grup yang butuh status Active (Middleware Curator Custom)
+    Route::middleware('curator')->group(function() {
+        Route::get('/challenges', [CuratorController::class, 'manage'])->name('challenges');
+        Route::get('/challenges/create', [CuratorController::class, 'create'])->name('challenges.create');
+        Route::post('/challenges', [CuratorController::class, 'store'])->name('challenges.store');
+        Route::get('/challenges/{challenge}/edit', [CuratorController::class, 'edit'])->name('challenges.edit');
+        Route::put('/challenges/{challenge}', [CuratorController::class, 'update'])->name('challenges.update');
+        Route::delete('/challenges/{challenge}', [CuratorController::class, 'destroy'])->name('challenges.destroy');
+        Route::patch('/challenges/{challenge}/submissions/{submission}/winner', [CuratorController::class, 'selectWinner'])->name('challenges.winner');
+    });
+});
+
+// --- PUBLIC ROUTES (WILDCARDS LAST) ---
+// Penting: Route dengan {parameter} diletakkan paling bawah agar tidak konflik dengan route statis
+Route::get('/challenges/{challenge}', [CuratorController::class, 'show'])->name('challenges.show');
+Route::get('/creator/{user}', [ProfileController::class, 'show'])->name('profile.show');
+Route::get('/artworks/{artwork}', [ArtworkController::class, 'show'])->name('artworks.show');
 
 require __DIR__.'/auth.php';
